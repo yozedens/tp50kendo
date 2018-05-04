@@ -16,7 +16,7 @@
         <div id="grid">
         </div>
     </div>
-    123
+    其他内容
 </body>
 <script>
     // var products = eval('{$data|default=""}');
@@ -25,21 +25,11 @@
         transport:{
             read:{
                 url:"/index.php/grid/index/get_member",
-            },
-            create:{
-                url:"/index.php/grid/index/create_member",
-                dataType:"json",
             }
         },
         pageSize:10,
-        parameterMap: function (options, operation) {
-            if (operation !== "read" && options.models) {
-                return { models: kendo.stringify(options.models),
-                        tblname: "t_ds_account_zd" };
-            }
-        }
     });
-    var grid = $("#grid").kendoGrid({
+    $("#grid").kendoGrid({
         dataSource: products,
         
         columns:[
@@ -62,7 +52,7 @@
         },
         sortable:true,
         groupable:true,
-    }).data('kendoGrid');
+    });
 
 </script>
 

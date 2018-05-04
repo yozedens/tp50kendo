@@ -25,10 +25,4 @@ class Index extends Base
         $res = self::$db->execFetchAll($sql,'select member');
         return $res;
     }
-
-    public function create_member()
-    {
-        $get_models = input('get');
-        var_dump($get_models);
-    }
 }

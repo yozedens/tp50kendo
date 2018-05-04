@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>kendoJ index</title>
+    {load href="/kendoJ/styles/kendo.common.min.css"} 
+    {load href="/kendoJ/styles/kendo.default.min.css"} 
+    {load href="/kendoJ/styles/kendo.default.mobile.min.css"}
+    {load href="/kendoJ/js/jquery.min.js,/kendoJ/js/kendo.all.min.js" /}
+
+</head>
+
+<body>
+    <div id="example" ; style="width: 96%;margin: auto;padding-top: 20px;">
+        <div id="grid">
+        </div>
+    </div>
+    其他内容
+</body>
+<script>
+    $(document).ready(function () {
+        var crudServiceBaseUrl = "/index.php/grid/Curd",
+            dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: crudServiceBaseUrl + "/read_ed1",
+                        dataType: "json"
+                    },
+                    update: {
+                        url: crudServiceBaseUrl + "/update",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: crudServiceBaseUrl + "/destroy",
+                        dataType: "json"
+                    },
+                    create: {
+                        url: crudServiceBaseUrl + "/create",
+                        dataType: "json"
+                    },
+                    parameterMap: function (options, operation) {
+                        if (operation !== "read" && options.models) { //非READ操作且有操作数据时传入的get参数
+                            return { 
+                                models: kendo.stringify(options.models),
+                                tblname: "t_ds_member" 
+                            };
+                        }else if (operation == "read"){ //READ操作传入的get参数
+                            return {
+                                tblname: "t_ds_member",   //表名
+                                col_list: "ID,MEMB_BH,MEMB_MC,MEMB_LEVEL,MEMB_BDAY",
+                                order_list: "MEMB_BH,MEMB_MC"  //排序方式
+                            }
+                        }
+                    }
+                },
+                batch: true,
+                pageSize: 10,
+                schema: {
+                    model: {
+                        id: "ID",
+                        fields: {
+                            MEMB_BH: { editable: true, nullable: true },
+                            MEMB_MC: { validation: { required: true } },
+                            MEMB_LEVEL: { validation: { required: false } },
+                            // MEMB_LEVEL: { type: "number", validation: { required: true, min: 1 } },
+                            MEMB_BDAY:{ type: "string"}
+                            // MEMB_BDAY: { type: "boolean" },
+                            // UnitsInStock: { type: "number", validation: { min: 0, required: true } }
+                        }
+                    }
+                }
+            });
+
+        $("#grid").kendoGrid({
+            dataSource: dataSource,
+            navigatable: true,
+            pageable: {
+                input:true,
+                numeric:false,
+            },
+            height: 550,
+            toolbar: ["create", "save", "cancel"],
+            columns: [
+                // "ID",
+                "MEMB_BH",
+                { field: "MEMB_MC", title: "会员名称", width: 120 },
+                { field: "MEMB_LEVEL", title: "会员等级", width: 120 },
+                { field: "MEMB_BDAY", title: "会员生日", width: 120 },
+                // { field: "MEMB_BDAY", width: 120, editor: customBoolEditor },
+                { command: "destroy", title: "&nbsp;", width: 150 }
+            ],
+            editable: true
+        });
+    });
+
+    function customBoolEditor(container, options) {
+        var guid = kendo.guid();
+        $('<input class="k-checkbox" id="' + guid + '" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container);
+        $('<label class="k-checkbox-label" for="' + guid + '">&#8203;</label>').appendTo(container);
+    }
+</script>
+
+</script>
+
+</html>
