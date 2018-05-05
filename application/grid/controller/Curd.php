@@ -137,8 +137,8 @@ class Curd extends Base
         }
 
         $sql_pro_update .= " end;";  //结束拼接begin end过程
-        // echo $sql_pro_update;
-        self::$db->execute($sql_pro_update,"update $tblname");
+        echo $sql_pro_update;
+        // self::$db->execute($sql_pro_update,"update $tblname");
     }
 
     public function destroy()
@@ -157,8 +157,8 @@ class Curd extends Base
         $sql_detele = rtrim($sql_detele,', ');
         $sql_detele .= " )";
 
-        // echo $sql_detele;
-        self::$db->execute($sql_detele,"delete from  $tblname");
+        echo $sql_detele;
+        // self::$db->execute($sql_detele,"delete from  $tblname");
     }
 
     public function create()
@@ -210,7 +210,7 @@ class Curd extends Base
         }
 
         $sql_pro_insert .= " end;";//结束拼接begin end过程
-        // echo $sql_pro_insert;
-        self::$db->execute($sql_pro_insert,"insert into $tblname");
+        echo $sql_pro_insert;
+        // self::$db->execute($sql_pro_insert,"insert into $tblname");
     }
 }

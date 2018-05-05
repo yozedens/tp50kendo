@@ -7,7 +7,7 @@
     {load href="/kendoJ/styles/kendo.common.min.css"} 
     {load href="/kendoJ/styles/kendo.default.min.css"} 
     {load href="/kendoJ/styles/kendo.default.mobile.min.css"}
-    {load href="/kendoJ/js/jquery.min.js,/kendoJ/js/kendo.all.min.js" /}
+    {load href="/kendoJ/js/jquery.min.js,/kendoJ/js/kendo.all.min.js,/kendoJ/js/cultures/kendo.culture.zh-CN.min.js" /}
 
 </head>
 
@@ -20,6 +20,7 @@
 </body>
 <script>
     $(document).ready(function () {
+        kendo.culture("zh-CN");
         var crudServiceBaseUrl = "/index.php/grid/Curd",
             dataSource = new kendo.data.DataSource({
                 transport: {
@@ -41,10 +42,31 @@
                     },
                     parameterMap: function (options, operation) {
                         if (operation !== "read" && options.models) { //非READ操作且有操作数据时传入的get参数
+                            // console.log(options.models);
+
+                            var data = options.models;
+                            var products = [];
+                            for (var i = 0; i < data.length; i++) {
+                                var product = {
+                                    ID: data[i].ID,
+                                    MEMB_BH: data[i].MEMB_BH,
+                                    MEMB_MC: data[i].MEMB_MC,
+                                    MEMB_LEVEL: data[i].MEMB_LEVEL,
+                                    FK_DP_ID: data[i].FK_DP_ID,
+                                    IS_ONLINE: data[i].IS_ONLINE?1:0,
+                                    MEMB_BDAY: kendo.format("{0:yyyy-MM-dd}",data[i].MEMB_BDAY),
+                                };
+                                products.push(product);
+                            }
+
                             return { 
-                                models: kendo.stringify(options.models),
+                                models: kendo.stringify(products),
                                 tblname: "t_ds_member" 
                             };
+                            // return { 
+                            //     models: kendo.stringify(options.models),
+                            //     tblname: "t_ds_member" 
+                            // };
                         }else if (operation == "read"){ //READ操作传入的get参数
                             return {
                                 tblname: "t_ds_member",   //表名
@@ -65,14 +87,33 @@
                             MEMB_LEVEL: { validation: { required: false } },
                             FK_DP_ID: { type: "number", defaultValue: 1, validation: { required: true, min: 1 }, },
                             // MEMB_LEVEL: { type: "number", validation: { required: true, min: 1 } },
-                            MEMB_BDAY:{ type: "string"},
+                            MEMB_BDAY: { type: "date"},
                             IS_ONLINE: { type: "boolean" },
+                            // IS_ONLINE: { type: "enums" },
                             // UnitsInStock: { type: "number", validation: { min: 0, required: true } }
                         }
-                    }
+                    },
+                    // parse: function(response) {
+
+                    //     var products = [];
+                    //     for (var i = 0; i < response.length; i++) {
+                    //         var product = {
+                    //             ID: response[i].ID,
+                    //             MEMB_BH: response[i].MEMB_BH,
+                    //             MEMB_MC: response[i].MEMB_MC,
+                    //             MEMB_LEVEL: response[i].MEMB_LEVEL,
+                    //             FK_DP_ID: response[i].FK_DP_ID,
+                    //             IS_ONLINE: response[i].IS_ONLINE?1:0,
+                    //             MEMB_BDAY: kendo.format("{0:yyyy-MM-dd}",response[i].MEMB_BDAY),
+                    //         };
+                    //         products.push(product);
+                    //     }
+                    //     // console.log(products);
+                    //     return products;
+                    // }
                 }
             });
-
+        console.log(kendo.format("{0:yyyy-MM-dd}",new Date("1959-10-26T16:00:00.000Z")));
         $("#grid").kendoGrid({
             dataSource: dataSource,
             navigatable: true,
@@ -103,10 +144,11 @@
                 // "ID",
                 { field: "MEMB_BH",    title: "会员编码", width: "200px"},
                 { field: "MEMB_MC",    title: "会员名称" },
-                { field: "FK_DP_ID",   title: "店铺ID", width: 100 },
+                { field: "FK_DP_ID",   title: "店铺ID",   width: 100 },
                 { field: "MEMB_LEVEL", title: "会员等级", width: "10%" },
-                { field: "MEMB_BDAY",  title: "会员生日", width: 120 },
-                { field: "IS_ONLINE",  title: "是否在线", width: 120 ,editor: customBoolEditor },
+                { field: "MEMB_BDAY",  title: "会员生日", format: "{0: yyyy-MM-dd}", width: 120 },
+                // { field: "IS_ONLINE",  title: "是否在线", width: 120 ,editor: customBoolEditor },
+                { field: "IS_ONLINE",  title: "是否在线", width: 120  },
                 // { field: "MEMB_BDAY", width: 120, editor: customBoolEditor },
                 { command: {name:"destroy", text:"删除",},  title: "&nbsp;", width: "10%" }
             ],
@@ -126,7 +168,46 @@
                     isFalse: "否",
                     isTrue: "是",                    
                     filter: "应用过滤",
-                    clear: "清除过滤"
+                    clear: "清除过滤",
+                    operator: "选择过滤条件"
+                },
+                operators: {
+                    string: {   //对于字符类型
+                        eq: "等于",
+                        neq: "不等于",
+                        contains: "包含",
+                        doesnotcontains: "不包含",
+                        isnull: "为null",
+                        isnotnull: "非null",
+                        isempty: "为空",   
+                        isnotempty: "非空",
+                        startswith: "串首",
+                        endswith: "串尾"
+                    },
+                    number: {   //对于数字类型
+                        eq: "等于",
+                        neq: "不等于",
+                        contains: "包含",
+                        doesnotcontains: "不包含",
+                        isnull: "为null",
+                        isnotnull: "非null",
+                        isempty: "为空",   
+                        isnotempty: "非空",
+                        startswith: "串首",
+                        endswith: "串尾"
+                    },
+                    date: {   //对于日期类型
+                        eq: "等于",
+                        neq: "不等于",
+                        contains: "包含",
+                        doesnotcontains: "不包含",
+                        isnull: "为null",
+                        isnotnull: "非null",
+                        isempty: "为空",   
+                        isnotempty: "非空",
+                        startswith: "串首",
+                        endswith: "串尾"
+                    }
                 }
             }
         });
@@ -136,6 +217,22 @@
         var guid = kendo.guid();
         $('<input class="k-checkbox" id="' + guid + '" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container);
         $('<label class="k-checkbox-label" for="' + guid + '">&#8203;</label>').appendTo(container);
+    }
+
+    function customDateTimePickerEditor(container, options) {
+        // $('<input required name="' + options.field + '"/>')
+        // .appendTo(container)
+        // .kendoDateTimePicker({});
+
+        $('<input required name="' + options.field + '"/>')
+        .appendTo(container)
+        .kendoDatePicker({
+            culture: "zh-CN"
+            // format: "yyyy-MM-dd",
+            // parseFormats: ["yyyy-MM-dd"]
+            // depth: "year",
+        });
+        
     }
 </script>
 
