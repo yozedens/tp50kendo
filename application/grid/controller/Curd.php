@@ -15,8 +15,10 @@ class Curd extends Base
                             ID,
                             MEMB_BH,
                             MEMB_MC,
+                            FK_DP_ID,
                             MEMB_LEVEL,
-                            to_char(MEMB_BDAY,'yyyy-mm-dd') as MEMB_BDAY
+                            to_char(MEMB_BDAY,'yyyy-mm-dd') as MEMB_BDAY,
+                            IS_ONLINE
                         from T_DS_MEMBER
                         ORDER BY MEMB_BH,MEMB_MC";
         $res        = self::$db->execFetchAll($sql,'select member');
@@ -117,6 +119,7 @@ class Curd extends Base
                 $tbl_key = $v['FIELD'];        //列名
                 $col_type = $v['FIELD_TYPE'];  //列类型
                 if(!empty($tbl_key)&&isset($value[$tbl_key])&&$tbl_key!='ID'){
+                    //bool值的处理还有问题
                     switch ($col_type) {   //考虑列类型为日期的情况
                         case 'DATE':
                             $sql_update .= "$tbl_key = to_date('$value[$tbl_key]','yyyy-mm-dd'), ";
@@ -134,8 +137,8 @@ class Curd extends Base
         }
 
         $sql_pro_update .= " end;";  //结束拼接begin end过程
-        echo $sql_pro_update;
-        // self::$db->execute($sql_pro_update,"update $tblname");
+        // echo $sql_pro_update;
+        self::$db->execute($sql_pro_update,"update $tblname");
     }
 
     public function destroy()
@@ -154,8 +157,8 @@ class Curd extends Base
         $sql_detele = rtrim($sql_detele,', ');
         $sql_detele .= " )";
 
-        echo $sql_detele;
-        // self::$db->execute($sql_detele,"delete from  $tblname");
+        // echo $sql_detele;
+        self::$db->execute($sql_detele,"delete from  $tblname");
     }
 
     public function create()
@@ -207,7 +210,7 @@ class Curd extends Base
         }
 
         $sql_pro_insert .= " end;";//结束拼接begin end过程
-        echo $sql_pro_insert;
-        // self::$db->execute($sql_pro_insert,"insert into $tblname");
+        // echo $sql_pro_insert;
+        self::$db->execute($sql_pro_insert,"insert into $tblname");
     }
 }

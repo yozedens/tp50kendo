@@ -48,7 +48,7 @@
                         }else if (operation == "read"){ //READ操作传入的get参数
                             return {
                                 tblname: "t_ds_member",   //表名
-                                col_list: "ID,MEMB_BH,MEMB_MC,MEMB_LEVEL,MEMB_BDAY",
+                                col_list: "ID,MEMB_BH,MEMB_MC,FK_DP_ID,MEMB_LEVEL,MEMB_BDAY,IS_ONLINE",
                                 order_list: "MEMB_BH,MEMB_MC"  //排序方式
                             }
                         }
@@ -63,9 +63,10 @@
                             MEMB_BH: { editable: true, nullable: true },
                             MEMB_MC: { validation: { required: true } },
                             MEMB_LEVEL: { validation: { required: false } },
+                            FK_DP_ID: { type: "number", defaultValue: 1, validation: { required: true, min: 1 }, },
                             // MEMB_LEVEL: { type: "number", validation: { required: true, min: 1 } },
-                            MEMB_BDAY:{ type: "string"}
-                            // MEMB_BDAY: { type: "boolean" },
+                            MEMB_BDAY:{ type: "string"},
+                            IS_ONLINE: { type: "boolean" },
                             // UnitsInStock: { type: "number", validation: { min: 0, required: true } }
                         }
                     }
@@ -78,19 +79,56 @@
             pageable: {
                 input:true,
                 numeric:false,
+                messages: {
+                    page:"页",
+                    of: "共 {0} 页",
+                    first:"第一页",
+                    last:"最后一页",
+                    next:"下一页",
+                    previous:"上一页",
+                    display: " {0}-{1} 共 {2} 项",
+                    refresh: "刷新"
+                },
+                refresh: true,
+                alwaysVisible: false
             },
-            height: 550,
-            toolbar: ["create", "save", "cancel"],
+            // height: 550,
+            // toolbar: ["create", "save", "cancel"],
+            toolbar: [
+                { name: "create", text: "创建"},
+                { name: "save",   text: "保存"}, 
+                { name: "cancel", text: "取消"}
+            ],
             columns: [
                 // "ID",
-                "MEMB_BH",
-                { field: "MEMB_MC", title: "会员名称", width: 120 },
-                { field: "MEMB_LEVEL", title: "会员等级", width: 120 },
-                { field: "MEMB_BDAY", title: "会员生日", width: 120 },
+                { field: "MEMB_BH",    title: "会员编码", width: "200px"},
+                { field: "MEMB_MC",    title: "会员名称" },
+                { field: "FK_DP_ID",   title: "店铺ID", width: 100 },
+                { field: "MEMB_LEVEL", title: "会员等级", width: "10%" },
+                { field: "MEMB_BDAY",  title: "会员生日", width: 120 },
+                { field: "IS_ONLINE",  title: "是否在线", width: 120 ,editor: customBoolEditor },
                 // { field: "MEMB_BDAY", width: 120, editor: customBoolEditor },
-                { command: "destroy", title: "&nbsp;", width: 150 }
+                { command: {name:"destroy", text:"删除",},  title: "&nbsp;", width: "10%" }
             ],
-            editable: true
+            editable: true,
+            // editable: "inline",
+            groupable: {
+                messages: {
+                    empty: "分组属性拉取至此处"
+                }
+            },
+            filterable: {
+                messages: {
+                    info: "按下列条件过滤:",
+                    title : "过滤",
+                    and: "且",
+                    or: "或",
+                    isFalse: "否",
+                    isTrue: "是",                    
+                    filter: "应用过滤",
+                    clear: "清除过滤"
+                }
+            }
         });
     });
 
