@@ -19,6 +19,7 @@
     其他内容
 </body>
 <script>
+
     $(document).ready(function () {
         kendo.culture("zh-CN");
         var crudServiceBaseUrl = "/index.php/grid/Curd",
@@ -84,7 +85,10 @@
                         fields: {
                             MEMB_BH: { editable: true, nullable: true },
                             MEMB_MC: { validation: { required: true } },
-                            MEMB_LEVEL: { validation: { required: false } },
+                            MEMB_LEVEL: { 
+                                validation: { required: true
+                                }
+                            },
                             FK_DP_ID: { type: "number", defaultValue: 1, validation: { required: true, min: 1 }, },
                             // MEMB_LEVEL: { type: "number", validation: { required: true, min: 1 } },
                             MEMB_BDAY: { type: "date"},
@@ -113,7 +117,9 @@
                     // }
                 }
             });
-        console.log(kendo.format("{0:yyyy-MM-dd}",new Date("1959-10-26T16:00:00.000Z")));
+        // console.log(kendo.format("{0:yyyy-MM-dd}",new Date("1959-10-26T16:00:00.000Z")));
+
+        
         $("#grid").kendoGrid({
             dataSource: dataSource,
             navigatable: true,
@@ -145,6 +151,7 @@
                 { field: "MEMB_BH",    title: "会员编码", width: "200px"},
                 { field: "MEMB_MC",    title: "会员名称" },
                 { field: "FK_DP_ID",   title: "店铺ID",   width: 100 },
+                // { field: "MEMB_LEVEL", title: "会员等级", width: "10%" },
                 { field: "MEMB_LEVEL", title: "会员等级", width: "10%" },
                 { field: "MEMB_BDAY",  title: "会员生日", format: "{0: yyyy-MM-dd}", width: 120 },
                 // { field: "IS_ONLINE",  title: "是否在线", width: 120 ,editor: customBoolEditor },
@@ -211,6 +218,7 @@
                 }
             }
         });
+        
     });
 
     function customBoolEditor(container, options) {
@@ -234,6 +242,8 @@
         });
         
     }
+
+    
 </script>
 
 </script>
